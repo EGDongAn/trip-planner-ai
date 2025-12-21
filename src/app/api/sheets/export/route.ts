@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import type { TimelineRow, TripMetadata } from '@/types/trip';
 
-export const runtime = 'edge';
-
 interface ExportRequestBody {
   destination: string;
   plan: string;
