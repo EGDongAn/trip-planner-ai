@@ -38,7 +38,7 @@ export class TripPlannerEngine {
    */
   async generateDestinations(
     userInput: string,
-    metadata: TripMetadata
+    metadata?: TripMetadata
   ): Promise<DestinationOption[]> {
     try {
       const prompt = buildDestinationPrompt(userInput, metadata);
@@ -83,7 +83,7 @@ export class TripPlannerEngine {
    */
   async generatePlanOptions(
     destination: DestinationOption,
-    metadata: TripMetadata
+    metadata?: TripMetadata
   ): Promise<PlanOption[]> {
     try {
       const prompt = buildPlanPrompt(destination, metadata);
@@ -129,7 +129,7 @@ export class TripPlannerEngine {
   async generateTimeline(
     destination: DestinationOption,
     plan: PlanOption,
-    metadata: TripMetadata
+    metadata?: TripMetadata
   ): Promise<{ timeline: TimelineRow[]; summary: TimelineSummary }> {
     try {
       const prompt = buildTimelinePrompt(destination, plan, metadata);
