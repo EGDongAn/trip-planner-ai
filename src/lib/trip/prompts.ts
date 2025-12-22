@@ -6,9 +6,19 @@ import type { DestinationOption, PlanOption, TripMetadata, TripEngineState } fro
 export function buildDestinationPrompt(userInput: string, metadata?: TripMetadata): string {
   const { startDate, endDate, numberOfDays, budget, travelStyle, interests, travelers, specialRequirements } = metadata || {};
 
-  let prompt = `You are an expert travel planner. Based on the user's input and preferences, suggest 5 diverse destination options.
+  let prompt = `You are an expert travel planner. Based on the user's input and preferences, suggest 5 destination options.
 
 User Input: "${userInput}"
+
+**CRITICAL**: Analyze the user input carefully:
+1. If the user mentions a SPECIFIC DESTINATION (city, country, region like "홍콩", "Paris", "일본", "Hawaii", "발리"):
+   - The FIRST option (id: "1") MUST be that exact destination
+   - Options 2-5 should be DIFFERENT AREAS or NEIGHBORHOODS within that same destination, OR very similar alternatives nearby
+   - Example: If user says "홍콩", option 1 = Hong Kong (general), options 2-5 = Hong Kong Island, Kowloon, Lantau Island, or nearby Macau/Shenzhen
+
+2. If the user gives a GENERAL description (like "따뜻한 곳", "beach vacation", "유럽 여행"):
+   - Suggest 5 diverse destinations that match the criteria
+   - Vary by budget, style, and specific attractions
 
 `;
 
@@ -46,8 +56,8 @@ User Input: "${userInput}"
   }
 
   prompt += `Requirements:
-- Generate exactly 5 diverse destination options
-- Each destination should cater to different aspects of the user's interests
+- Generate exactly 5 destination options
+- RESPECT the user's specific destination request if one is given
 - Include varied budget levels and travel styles
 - Consider the travel dates and climate
 - Provide practical budget estimates using $ symbols ($, $$, $$$)
@@ -56,7 +66,7 @@ User Input: "${userInput}"
 - Consider the traveler composition (families, couples, solo, groups, etc.)
 
 For each destination, provide:
-- A unique ID
+- A unique ID (1, 2, 3, 4, 5)
 - Name and country
 - Compelling description (2-3 sentences)
 - What it's best for (tags like 'beaches', 'culture', 'adventure', 'food', 'nightlife', 'nature', 'history', 'relaxation')
