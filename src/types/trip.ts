@@ -49,7 +49,11 @@ export interface TripMetadata {
   departureCity: string;
   budget?: number;
   preferences: string[];
+  presets?: string[];
+  bookings?: BookingAttachment[];
 }
+
+import type { BookingAttachment } from "./booking";
 
 export interface TripState {
   stage: TripStage;

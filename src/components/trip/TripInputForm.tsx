@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { MapPin, Users, Calendar, Sparkles } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
+import { PresetCards } from './PresetCards';
+import { BookingUpload } from './BookingUpload';
+import type { BookingAttachment } from '@/types/booking';
 
 export interface TripInputFormProps {
   onSubmit: (data: TripFormData) => void;
@@ -14,6 +17,8 @@ export interface TripFormData {
   travelers?: number;
   startDate?: string;
   endDate?: string;
+  presets?: string[];
+  bookings?: BookingAttachment[];
 }
 
 export const TripInputForm: React.FC<TripInputFormProps> = ({
@@ -26,6 +31,8 @@ export const TripInputForm: React.FC<TripInputFormProps> = ({
   const [travelers, setTravelers] = useState<number>(2);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [selectedPresets, setSelectedPresets] = useState<string[]>([]);
+  const [bookings, setBookings] = useState<BookingAttachment[]>([]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,12 +41,17 @@ export const TripInputForm: React.FC<TripInputFormProps> = ({
       origin: origin || undefined,
       travelers: travelers || undefined,
       startDate: startDate || undefined,
-      endDate: endDate || undefined
+      endDate: endDate || undefined,
+      presets: selectedPresets.length > 0 ? selectedPresets : undefined,
+      bookings: bookings.filter(b => b.status === 'ready').length > 0
+        ? bookings.filter(b => b.status === 'ready')
+        : undefined
     });
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full max-w-4xl mx-auto space-y-4">
+    <form onSubmit={handleSubmit} className="w-full max-w-4xl mx-auto space-y-6">
+      {/* 텍스트 입력 */}
       <div className="relative">
         <textarea
           value={query}
@@ -50,6 +62,18 @@ export const TripInputForm: React.FC<TripInputFormProps> = ({
           required
         />
       </div>
+
+      {/* 프리셋 카드 선택 */}
+      <PresetCards
+        selected={selectedPresets}
+        onSelect={setSelectedPresets}
+      />
+
+      {/* 예약 정보 업로드 */}
+      <BookingUpload
+        bookings={bookings}
+        onBookingsChange={setBookings}
+      />
 
       <div className="flex items-center justify-between">
         <button

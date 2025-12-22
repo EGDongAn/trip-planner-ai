@@ -4,6 +4,8 @@ export { DestinationSelector } from './trip/DestinationSelector';
 export { PlanSelector } from './trip/PlanSelector';
 export { TimelineDisplay } from './trip/TimelineDisplay';
 export { TimelineRow } from './trip/TimelineRow';
+export { PresetCards } from './trip/PresetCards';
+export { BookingUpload } from './trip/BookingUpload';
 
 // Chat components
 export { ChatContainer } from './chat/ChatContainer';
@@ -32,5 +34,7 @@ export type { Destination } from './trip/DestinationSelector';
 export type { TripPlan, PlanSelectorProps } from './trip/PlanSelector';
 export type { DaySchedule, TimelineDisplayProps } from './trip/TimelineDisplay';
 export type { TimelineItem, TimelineRowProps } from './trip/TimelineRow';
+export type { PresetCardsProps, PresetOption } from './trip/PresetCards';
+export type { BookingUploadProps } from './trip/BookingUpload';
 export type { FlightCardProps } from './travel/FlightCard';
 export type { HotelCardProps } from './travel/HotelCard';

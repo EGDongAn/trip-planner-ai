@@ -512,6 +512,21 @@ export interface TimelineSummary {
   keyHighlights?: string[];
 }
 
+export interface BookingData {
+  type: string;
+  parsedData?: {
+    type: string;
+    airline?: string;
+    flightNumber?: string;
+    departure?: { airport: string; time: string; date: string };
+    arrival?: { airport: string; time: string; date: string };
+    name?: string;
+    checkIn?: string;
+    checkOut?: string;
+    roomType?: string;
+  };
+}
+
 export interface TripMetadata {
   startDate?: string;
   endDate?: string;
@@ -525,6 +540,8 @@ export interface TripMetadata {
     seniors?: number;
   };
   specialRequirements?: string[];
+  presets?: string[];
+  bookings?: BookingData[];
 }
 
 /**

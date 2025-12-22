@@ -1,10 +1,47 @@
-import type { DestinationOption, PlanOption, TripMetadata, TripEngineState } from "./schemas";
+import type { DestinationOption, PlanOption, TripMetadata, TripEngineState, BookingData } from "./schemas";
+
+// Preset labels for prompts
+const PRESET_LABELS: Record<string, string> = {
+  beach: "해변 휴양 (바다, 리조트, 휴식)",
+  city: "도시 탐험 (쇼핑, 맛집, 야경)",
+  culture: "문화 여행 (역사, 박물관, 전통)",
+  adventure: "액티비티 (하이킹, 스포츠)",
+  food: "미식 여행 (로컬 맛집, 푸드투어)",
+};
+
+/**
+ * Build booking context for prompts
+ */
+function buildBookingContext(bookings?: BookingData[]): string {
+  if (!bookings || bookings.length === 0) return "";
+
+  let context = "\n**사전 예약 정보 (이미 예약된 항목):**\n";
+
+  for (const booking of bookings) {
+    if (booking.parsedData) {
+      const data = booking.parsedData;
+      if (data.type === "flight") {
+        context += `✈️ 항공편: ${data.airline || ""} ${data.flightNumber || ""}\n`;
+        context += `   - 출발: ${data.departure?.airport} ${data.departure?.date} ${data.departure?.time}\n`;
+        context += `   - 도착: ${data.arrival?.airport} ${data.arrival?.date} ${data.arrival?.time}\n`;
+      } else if (data.type === "hotel") {
+        context += `🏨 숙소: ${data.name || ""}\n`;
+        context += `   - 체크인: ${data.checkIn}, 체크아웃: ${data.checkOut}\n`;
+        if (data.roomType) context += `   - 객실: ${data.roomType}\n`;
+      }
+    }
+  }
+
+  context += `\n**중요**: 위 예약 정보를 반드시 일정에 반영하세요. 항공편 출도착 시간과 호텔 체크인/체크아웃 시간을 기준으로 일정을 계획해야 합니다.\n\n`;
+
+  return context;
+}
 
 /**
  * Build prompt for generating 5 destination options based on user input
  */
 export function buildDestinationPrompt(userInput: string, metadata?: TripMetadata): string {
-  const { startDate, endDate, numberOfDays, budget, travelStyle, interests, travelers, specialRequirements } = metadata || {};
+  const { startDate, endDate, numberOfDays, budget, travelStyle, interests, travelers, specialRequirements, presets, bookings } = metadata || {};
 
   let prompt = `You are an expert travel planner. Based on the user's input and preferences, suggest 5 destination options.
 
@@ -55,6 +92,15 @@ User Input: "${userInput}"
     prompt += `Special Requirements: ${specialRequirements.join(", ")}\n\n`;
   }
 
+  // Add travel style presets
+  if (presets && presets.length > 0) {
+    const presetLabels = presets.map(p => PRESET_LABELS[p] || p).join(", ");
+    prompt += `Preferred Travel Styles: ${presetLabels}\n\n`;
+  }
+
+  // Add booking context if available
+  prompt += buildBookingContext(bookings);
+
   prompt += `Requirements:
 - Generate exactly 5 destination options
 - RESPECT the user's specific destination request if one is given
@@ -83,7 +129,7 @@ Make the descriptions engaging and informative, highlighting unique selling poin
  * Build prompt for generating A/B/C plan options for a selected destination
  */
 export function buildPlanPrompt(destination: DestinationOption, metadata?: TripMetadata): string {
-  const { numberOfDays, budget, travelStyle, interests, travelers, specialRequirements } = metadata || {};
+  const { numberOfDays, budget, travelStyle, interests, travelers, specialRequirements, presets, bookings } = metadata || {};
 
   let prompt = `You are an expert travel planner. Create 3 distinct trip plan options (A, B, C) for the following destination.
 
@@ -121,6 +167,16 @@ Climate: ${destination.climate}
   if (specialRequirements && specialRequirements.length > 0) {
     prompt += `Special Requirements: ${specialRequirements.join(", ")}\n\n`;
   }
+
+  // Add travel style presets for plan generation
+  if (presets && presets.length > 0) {
+    const presetLabels = presets.map(p => PRESET_LABELS[p] || p).join(", ");
+    prompt += `User's Preferred Travel Styles: ${presetLabels}\n\n`;
+    prompt += `**Important**: Incorporate the user's preferred styles into ALL plan options, adjusting the intensity level for each plan while respecting these preferences.\n\n`;
+  }
+
+  // Add booking context for plan awareness
+  prompt += buildBookingContext(bookings);
 
   prompt += `Create 3 distinctly different plan options:
 
@@ -165,7 +221,7 @@ export function buildTimelinePrompt(
   plan: PlanOption,
   metadata?: TripMetadata
 ): string {
-  const { startDate, endDate, numberOfDays, budget, interests, travelers, specialRequirements } = metadata || {};
+  const { startDate, endDate, numberOfDays, budget, interests, travelers, specialRequirements, presets, bookings } = metadata || {};
 
   let prompt = `You are an expert travel planner. Create a detailed day-by-day timeline for the following trip.
 
@@ -210,6 +266,24 @@ Key Highlights: ${plan.highlights.join(", ")}
 
   if (specialRequirements && specialRequirements.length > 0) {
     prompt += `Special Requirements: ${specialRequirements.join(", ")}\n\n`;
+  }
+
+  // Add travel style presets for timeline generation
+  if (presets && presets.length > 0) {
+    const presetLabels = presets.map(p => PRESET_LABELS[p] || p).join(", ");
+    prompt += `User's Preferred Travel Styles: ${presetLabels}\n`;
+    prompt += `**Important**: Focus activities on these preferred styles.\n\n`;
+  }
+
+  // Add booking context - CRITICAL for timeline generation
+  if (bookings && bookings.length > 0) {
+    prompt += buildBookingContext(bookings);
+    prompt += `**CRITICAL TIMELINE CONSTRAINTS**:
+- Use the booked flight arrival time as Day 1 start
+- Use the booked flight departure time as the final day end
+- Include hotel check-in on arrival day and check-out on departure day
+- Plan activities AROUND these fixed bookings
+- Do NOT suggest alternative flights or hotels - these are already booked\n\n`;
   }
 
   prompt += `Create a detailed timeline with the following requirements:
