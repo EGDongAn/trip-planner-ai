@@ -59,7 +59,8 @@ export function useTripPlanner() {
         });
 
         if (!response.ok) {
-          throw new Error(`Failed to generate destinations: ${response.statusText}`);
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.error || `Failed to generate destinations: ${response.statusText}`);
         }
 
         const data = await response.json();
