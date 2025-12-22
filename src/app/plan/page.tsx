@@ -159,6 +159,8 @@ export default function PlanPage() {
                   amount: tripState.selectedPlan.estimatedCost.min,
                   currency: tripState.selectedPlan.estimatedCost.currency,
                 }}
+                tripName={`${tripState.selectedDestination.name} Trip`}
+                rawTimeline={tripState.timeline}
               />
             </div>
 
