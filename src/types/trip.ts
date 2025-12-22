@@ -5,11 +5,10 @@ export interface DestinationOption {
   id: string;
   name: string;
   country: string;
-  matchScore: number;
-  highlights: string[];
-  bestFor: string;
-  estimatedBudget: { min: number; max: number; currency: string };
-  weatherNote: string;
+  description: string;
+  bestFor: string[];
+  estimatedBudget: string;
+  climate: string;
   imageUrl?: string;
 }
 

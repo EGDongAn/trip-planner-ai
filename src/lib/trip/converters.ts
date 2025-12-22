@@ -22,11 +22,11 @@ export function toEngineState(state: TripState): TripEngineState | null {
     id: state.selectedDestination.id,
     name: state.selectedDestination.name,
     country: state.selectedDestination.country,
-    description: state.selectedDestination.highlights.join(". "),
-    bestFor: [state.selectedDestination.bestFor],
-    estimatedBudget: `${state.selectedDestination.estimatedBudget.currency}${state.selectedDestination.estimatedBudget.min}-${state.selectedDestination.estimatedBudget.max}`,
+    description: state.selectedDestination.description,
+    bestFor: state.selectedDestination.bestFor,
+    estimatedBudget: state.selectedDestination.estimatedBudget,
     imageUrl: state.selectedDestination.imageUrl,
-    climate: state.selectedDestination.weatherNote,
+    climate: state.selectedDestination.climate,
   };
 
   // Convert plan from main types to schema types
@@ -37,8 +37,10 @@ export function toEngineState(state: TripState): TripEngineState | null {
     style: state.selectedPlan.pace,
     pace: state.selectedPlan.pace,
     highlights: state.selectedPlan.highlights,
-    estimatedCost: `${state.selectedPlan.estimatedCost.currency}${state.selectedPlan.estimatedCost.min}-${state.selectedPlan.estimatedCost.max}`,
-    targetAudience: state.selectedPlan.includes,
+    estimatedCost: state.selectedPlan.estimatedCost
+      ? `${state.selectedPlan.estimatedCost.currency}${state.selectedPlan.estimatedCost.min}-${state.selectedPlan.estimatedCost.max}`
+      : "Unknown",
+    targetAudience: state.selectedPlan.includes || [],
   };
 
   // Convert timeline from main types to schema types

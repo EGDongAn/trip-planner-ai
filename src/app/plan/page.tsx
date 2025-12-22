@@ -33,13 +33,11 @@ export default function PlanPage() {
       id: dest.id,
       name: dest.name,
       country: dest.country,
-      highlights: dest.highlights,
-      estimatedCost: dest.estimatedBudget,
-      weather: {
-        temperature: dest.weatherNote || 'N/A',
-        condition: 'N/A',
-      },
-      matchScore: dest.matchScore,
+      description: dest.description || '',
+      bestFor: dest.bestFor || [],
+      estimatedBudget: dest.estimatedBudget || '$',
+      climate: dest.climate || 'N/A',
+      imageUrl: dest.imageUrl,
     }));
   };
 

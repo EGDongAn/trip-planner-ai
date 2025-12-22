@@ -1,22 +1,16 @@
 import React from 'react';
-import { MapPin, DollarSign, Cloud, Star } from 'lucide-react';
+import { MapPin, DollarSign, Cloud } from 'lucide-react';
 import { Card } from '../ui/Card';
 
 export interface Destination {
   id: string;
   name: string;
   country: string;
-  highlights: string[];
-  estimatedCost: {
-    min: number;
-    max: number;
-    currency: string;
-  };
-  weather: {
-    temperature: string;
-    condition: string;
-  };
-  matchScore: number;
+  description: string;
+  bestFor: string[];
+  estimatedBudget: string;
+  climate: string;
+  imageUrl?: string;
 }
 
 export interface DestinationSelectorProps {
@@ -43,46 +37,43 @@ export const DestinationSelector: React.FC<DestinationSelectorProps> = ({
             onClick={() => onSelect(destination)}
             className="flex flex-col h-full"
           >
-            <div className="flex items-start justify-between mb-3">
-              <div>
-                <h3 className="text-lg font-bold text-slate-100">
-                  {destination.name}
-                </h3>
-                <div className="flex items-center gap-1 text-sm text-slate-400 mt-1">
-                  <MapPin className="w-4 h-4" />
-                  <span>{destination.country}</span>
-                </div>
-              </div>
-              <div className="flex items-center gap-1 bg-blue-500/20 text-blue-400 px-2 py-1 rounded-lg text-xs font-medium">
-                <Star className="w-3 h-3" />
-                <span>{Math.round(destination.matchScore * 100)}%</span>
+            <div className="mb-3">
+              <h3 className="text-lg font-bold text-slate-100">
+                {destination.name}
+              </h3>
+              <div className="flex items-center gap-1 text-sm text-slate-400 mt-1">
+                <MapPin className="w-4 h-4" />
+                <span>{destination.country}</span>
               </div>
             </div>
 
             <div className="flex-1 space-y-3">
+              <p className="text-sm text-slate-300 line-clamp-3">
+                {destination.description}
+              </p>
+
               <div>
-                <h4 className="text-xs font-medium text-slate-400 mb-1">하이라이트</h4>
-                <ul className="space-y-1">
-                  {destination.highlights.slice(0, 3).map((highlight, idx) => (
-                    <li key={idx} className="text-sm text-slate-300 flex items-start gap-1">
-                      <span className="text-blue-400 mt-1">•</span>
-                      <span>{highlight}</span>
-                    </li>
+                <h4 className="text-xs font-medium text-slate-400 mb-1">추천 포인트</h4>
+                <div className="flex flex-wrap gap-1">
+                  {destination.bestFor.slice(0, 4).map((tag, idx) => (
+                    <span key={idx} className="text-xs bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded">
+                      {tag}
+                    </span>
                   ))}
-                </ul>
+                </div>
               </div>
 
               <div className="pt-3 border-t border-slate-700 space-y-2">
                 <div className="flex items-center gap-2 text-sm">
                   <DollarSign className="w-4 h-4 text-slate-400" />
                   <span className="text-slate-300">
-                    {destination.estimatedCost.currency} {destination.estimatedCost.min.toLocaleString()} - {destination.estimatedCost.max.toLocaleString()}
+                    {destination.estimatedBudget}
                   </span>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
                   <Cloud className="w-4 h-4 text-slate-400" />
                   <span className="text-slate-300">
-                    {destination.weather.temperature} • {destination.weather.condition}
+                    {destination.climate}
                   </span>
                 </div>
               </div>
