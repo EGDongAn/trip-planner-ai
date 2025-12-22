@@ -1,6 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "trip-planner-ai",
+  "account_id": "2b0eaaddfd905551367dfdecbbfbd2b4",
   "main": ".open-next/worker.js",
   "compatibility_date": "2025-05-05",
   "compatibility_flags": ["nodejs_compat_v2"],
