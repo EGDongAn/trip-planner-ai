@@ -3,8 +3,8 @@ import type { DestinationOption, PlanOption, TripMetadata, TripEngineState } fro
 /**
  * Build prompt for generating 5 destination options based on user input
  */
-export function buildDestinationPrompt(userInput: string, metadata: TripMetadata): string {
-  const { startDate, endDate, numberOfDays, budget, travelStyle, interests, travelers, specialRequirements } = metadata;
+export function buildDestinationPrompt(userInput: string, metadata?: TripMetadata): string {
+  const { startDate, endDate, numberOfDays, budget, travelStyle, interests, travelers, specialRequirements } = metadata || {};
 
   let prompt = `You are an expert travel planner. Based on the user's input and preferences, suggest 5 diverse destination options.
 
@@ -72,8 +72,8 @@ Make the descriptions engaging and informative, highlighting unique selling poin
 /**
  * Build prompt for generating A/B/C plan options for a selected destination
  */
-export function buildPlanPrompt(destination: DestinationOption, metadata: TripMetadata): string {
-  const { numberOfDays, budget, travelStyle, interests, travelers, specialRequirements } = metadata;
+export function buildPlanPrompt(destination: DestinationOption, metadata?: TripMetadata): string {
+  const { numberOfDays, budget, travelStyle, interests, travelers, specialRequirements } = metadata || {};
 
   let prompt = `You are an expert travel planner. Create 3 distinct trip plan options (A, B, C) for the following destination.
 
@@ -153,9 +153,9 @@ Make each plan distinct and appealing to different types of travelers. Consider 
 export function buildTimelinePrompt(
   destination: DestinationOption,
   plan: PlanOption,
-  metadata: TripMetadata
+  metadata?: TripMetadata
 ): string {
-  const { startDate, endDate, numberOfDays, budget, interests, travelers, specialRequirements } = metadata;
+  const { startDate, endDate, numberOfDays, budget, interests, travelers, specialRequirements } = metadata || {};
 
   let prompt = `You are an expert travel planner. Create a detailed day-by-day timeline for the following trip.
 

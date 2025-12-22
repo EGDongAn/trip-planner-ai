@@ -45,8 +45,16 @@ export function useTripPlanner() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
+            action: "destinations",
             userInput,
-            metadata,
+            metadata: {
+              ...metadata,
+              startDate: metadata.departureDate,
+              endDate: metadata.returnDate,
+              numberOfDays: metadata.departureDate && metadata.returnDate
+                ? Math.ceil((new Date(metadata.returnDate).getTime() - new Date(metadata.departureDate).getTime()) / (1000 * 60 * 60 * 24))
+                : undefined,
+            },
           }),
         });
 
