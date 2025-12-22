@@ -97,6 +97,8 @@ export default function PlanPage() {
       returnDate: data.endDate || '',
       departureCity: data.origin || '',
       preferences: [],
+      presets: data.presets,
+      bookings: data.bookings,
     };
     generateDestinations(data.query, metadata);
   };

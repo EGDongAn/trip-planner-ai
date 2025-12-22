@@ -7,6 +7,11 @@ const PRESET_LABELS: Record<string, string> = {
   culture: "문화 여행 (역사, 박물관, 전통)",
   adventure: "액티비티 (하이킹, 스포츠)",
   food: "미식 여행 (로컬 맛집, 푸드투어)",
+  romantic: "로맨틱 (커플, 허니문, 기념일)",
+  family: "가족 여행 (아이동반, 효도여행)",
+  photo: "포토스팟 (SNS, 인생샷, 뷰맛집)",
+  luxury: "럭셔리 (5성급, 프리미엄)",
+  budget: "가성비 (알뜰여행, 백패커)",
 };
 
 /**

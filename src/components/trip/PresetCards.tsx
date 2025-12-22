@@ -1,7 +1,19 @@
 'use client';
 
 import React from 'react';
-import { Palmtree, Building2, Landmark, Mountain, UtensilsCrossed, type LucideIcon } from 'lucide-react';
+import {
+  Palmtree,
+  Building2,
+  Landmark,
+  Mountain,
+  UtensilsCrossed,
+  Heart,
+  Users,
+  Camera,
+  Sparkles,
+  Wallet,
+  type LucideIcon
+} from 'lucide-react';
 
 interface PresetOption {
   id: string;
@@ -16,6 +28,11 @@ const PRESETS: PresetOption[] = [
   { id: 'culture', icon: Landmark, title: '문화 여행', description: '역사, 박물관, 전통' },
   { id: 'adventure', icon: Mountain, title: '액티비티', description: '하이킹, 스포츠' },
   { id: 'food', icon: UtensilsCrossed, title: '미식 여행', description: '로컬 맛집, 푸드투어' },
+  { id: 'romantic', icon: Heart, title: '로맨틱', description: '커플, 허니문, 기념일' },
+  { id: 'family', icon: Users, title: '가족 여행', description: '아이동반, 효도여행' },
+  { id: 'photo', icon: Camera, title: '포토스팟', description: 'SNS, 인생샷, 뷰맛집' },
+  { id: 'luxury', icon: Sparkles, title: '럭셔리', description: '5성급, 프리미엄' },
+  { id: 'budget', icon: Wallet, title: '가성비', description: '알뜰여행, 백패커' },
 ];
 
 export interface PresetCardsProps {
@@ -37,7 +54,7 @@ export const PresetCards: React.FC<PresetCardsProps> = ({ selected, onSelect }) 
       <p className="text-sm text-slate-400">
         어떤 스타일의 여행을 원하시나요? <span className="text-slate-500">(복수 선택 가능)</span>
       </p>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
         {PRESETS.map((preset) => {
           const Icon = preset.icon;
           const isSelected = selected.includes(preset.id);
