@@ -107,9 +107,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Convert file to base64
+    // Convert file to base64 (Cloudflare Workers compatible)
     const bytes = await file.arrayBuffer();
-    const base64 = Buffer.from(bytes).toString("base64");
+    const uint8Array = new Uint8Array(bytes);
+    let binary = '';
+    for (let i = 0; i < uint8Array.length; i++) {
+      binary += String.fromCharCode(uint8Array[i]);
+    }
+    const base64 = btoa(binary);
 
     // Determine mime type for Gemini
     let mimeType = file.type;

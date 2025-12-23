@@ -16,6 +16,10 @@ export const BookingUpload: React.FC<BookingUploadProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
 
+  // Use ref to track current bookings to avoid stale closure
+  const bookingsRef = React.useRef(bookings);
+  bookingsRef.current = bookings;
+
   const handleUpload = useCallback(async (file: File) => {
     const tempId = `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
@@ -28,7 +32,8 @@ export const BookingUpload: React.FC<BookingUploadProps> = ({
       status: 'uploading',
     };
 
-    onBookingsChange([...bookings, newBooking]);
+    // Add new booking using current ref value
+    onBookingsChange([...bookingsRef.current, newBooking]);
 
     try {
       const formData = new FormData();
@@ -42,9 +47,9 @@ export const BookingUpload: React.FC<BookingUploadProps> = ({
       const result = await response.json();
 
       if (result.success) {
-        // Update the booking with parsed data
+        // Update the booking with parsed data using ref for current state
         onBookingsChange(
-          bookings
+          bookingsRef.current
             .filter((b) => b.id !== tempId)
             .concat({
               id: result.id,
@@ -56,9 +61,9 @@ export const BookingUpload: React.FC<BookingUploadProps> = ({
             })
         );
       } else {
-        // Update with error
+        // Update with error using ref for current state
         onBookingsChange(
-          bookings.map((b) =>
+          bookingsRef.current.map((b) =>
             b.id === tempId
               ? { ...b, status: 'error' as const, error: result.error || 'Upload failed' }
               : b
@@ -66,15 +71,16 @@ export const BookingUpload: React.FC<BookingUploadProps> = ({
         );
       }
     } catch (error) {
+      console.error('Upload error:', error);
       onBookingsChange(
-        bookings.map((b) =>
+        bookingsRef.current.map((b) =>
           b.id === tempId
             ? { ...b, status: 'error' as const, error: 'Network error' }
             : b
         )
       );
     }
-  }, [bookings, onBookingsChange]);
+  }, [onBookingsChange]);
 
   const handleFiles = useCallback((files: FileList | null) => {
     if (!files) return;
@@ -120,10 +126,14 @@ export const BookingUpload: React.FC<BookingUploadProps> = ({
     if (booking.parsedData) {
       if (booking.parsedData.type === 'flight') {
         const f = booking.parsedData as ParsedFlightInfo;
-        summary = `${f.departure.airport} → ${f.arrival.airport}`;
+        if (f.departure?.airport && f.arrival?.airport) {
+          summary = `${f.departure.airport} → ${f.arrival.airport}`;
+        }
       } else if (booking.parsedData.type === 'hotel') {
         const h = booking.parsedData as ParsedHotelInfo;
-        summary = h.name;
+        if (h.name) {
+          summary = h.name;
+        }
       }
     }
 
@@ -131,10 +141,16 @@ export const BookingUpload: React.FC<BookingUploadProps> = ({
     if (booking.parsedData) {
       if (booking.parsedData.type === 'flight') {
         const f = booking.parsedData as ParsedFlightInfo;
-        detail = `${f.flightNumber} | ${f.departure.date} ${f.departure.time}`;
+        const parts = [];
+        if (f.flightNumber) parts.push(f.flightNumber);
+        if (f.departure?.date) parts.push(f.departure.date);
+        if (f.departure?.time) parts.push(f.departure.time);
+        detail = parts.join(' | ');
       } else if (booking.parsedData.type === 'hotel') {
         const h = booking.parsedData as ParsedHotelInfo;
-        detail = `${h.checkIn} ~ ${h.checkOut}${h.roomType ? ` | ${h.roomType}` : ''}`;
+        if (h.checkIn && h.checkOut) {
+          detail = `${h.checkIn} ~ ${h.checkOut}${h.roomType ? ` | ${h.roomType}` : ''}`;
+        }
       }
     }
 
